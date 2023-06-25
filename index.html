@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pemindai QR Code</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.2/html5-qrcode.min.js"></script>
+  </head>
+
+  <body>
+    <h1>Pemindai QR Code</h1>
+    <div id="reader"></div>
+    <center>
+      <div>
+        <input
+          type="text"
+          name="hasil"
+          id="hasil"
+          placeholder="Hasil akan muncul disini"
+        />
+      </div>
+    </center>
+
+    <script>
+      function onScanSuccess(qrCodeMessage) {
+        alert("Hasil Pemindaian: " + qrCodeMessage);
+        document.getElementById("hasil").value = qrCodeMessage;
+        // window.open(qrCodeMessage, "_blank");
+        // Lakukan sesuatu dengan hasil pemindaian QR code di sini
+      }
+
+      function onScanFailure(error) {
+        // Tangani jika pemindaian gagal
+        console.error(error);
+      }
+
+      function startScanner() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          // Minta izin akses kamera
+          navigator.mediaDevices
+            .getUserMedia({
+              video: true,
+            })
+            .then(function (stream) {
+              let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+                fps: 10,
+                qrbox: 250,
+                constraints: {
+                  video: stream,
+                },
+              });
+
+              html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            })
+            .catch(function (error) {
+              // Tangani jika izin akses ditolak
+              console.error("Izin akses kamera ditolak:", error);
+            });
+        } else {
+          alert("Browser tidak mendukung akses kamera");
+        }
+      }
+
+      // Panggil fungsi untuk memulai pemindai QR code
+      startScanner();
+    </script>
+  </body>
+</html>
